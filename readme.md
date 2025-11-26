@@ -15,7 +15,7 @@ Conéctate a tu instancia EC2 (o servidor remoto) por SSH.
 Descarga y ejecuta el script de configuración. Estos comandos descargarán el script, le darán permisos de ejecución y lo iniciarán.
 
 ```bash
-wget https://raw.githubusercontent.com/eduartrob/rob-api/develop/setup.sh
+wget https://raw.githubusercontent.com/eduartrob/orchestration-service-aura/main/setup.sh
 chmod +x setup.sh
 sudo ./setup.sh
 ```
