@@ -4,7 +4,7 @@ Este directorio contiene scripts y documentación para orquestar el despliegue y
 
 ## Setup Automatizado
 
-Sigue estos pasos para configurar tu entorno, instalar dependencias y preparar RabbitMQ.
+Sigue estos pasos para configurar tu entorno e instalar dependencias globales.
 
 ### 1. Conexión al Servidor
 
@@ -20,13 +20,17 @@ chmod +x setup.sh
 sudo ./setup.sh
 ```
 
-> **Nota:** Es importante ejecutar el script con `sudo` para permitir la instalación de paquetes globales como Docker.
+> **Nota:** Es importante ejecutar el script con `sudo` para permitir la instalación de paquetes globales y la actualización del sistema.
 
-### 3. Instrucciones del Script
+### 3. ¿Qué hace el script?
 
-Sigue las instrucciones interactivas del script:
+1.  **Actualización del Sistema:** Ejecuta `apt-get update` y `upgrade` para asegurar que el servidor esté al día.
+2.  **Instalación de Dependencias:** Verifica e instala automáticamente Docker, Docker Compose y Node.js si no están presentes.
 
-1.  **Instalación de Dependencias:** El script verificará e instalará automáticamente todas las dependencias necesarias (Docker, Docker Compose, Node.js, etc.) si no están presentes.
-2.  **Carga de Configuración:** El script hará una pausa y te pedirá que cargues tus archivos `.env` (y cualquier otro archivo de configuración necesario) en el directorio del proyecto.
-    *   Puedes usar `scp` o un cliente SFTP (como FileZilla) para subir estos archivos desde tu máquina local.
-3.  **Configuración de RabbitMQ:** Una vez reanudado, el script levantará el contenedor de RabbitMQ y configurará automáticamente los usuarios y permisos necesarios para los microservicios.
+### 4. Pasos Siguientes
+
+Una vez finalizado el setup, deberás:
+
+1.  Clonar tus repositorios de microservicios.
+2.  Configurar los archivos `.env` manualmente.
+3.  Ejecutar cada servicio según sea necesario (ej. `docker compose up` o `npm run dev`).
