@@ -13,31 +13,74 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}🚀 Iniciando Setup de Orquestación...${NC}\n"
 
-# --- 1. Verificaciones Globales ---
-echo -e "${YELLOW}--- 1. Verificando Herramientas Globales ---${NC}"
+# Verificar si se está ejecutando como root
+if [ "$EUID" -ne 0 ]; then
+  echo -e "${RED}❌ Por favor, ejecuta este script como root (sudo).${NC}"
+  exit 1
+fi
 
-check_command() {
-    if ! command -v "$1" &> /dev/null; then
-        echo -e "${RED}❌ $1 no está instalado.${NC}"
-        return 1
+# --- 1. Verificaciones e Instalaciones Globales ---
+echo -e "${YELLOW}--- 1. Verificando e Instalando Herramientas Globales ---${NC}"
+
+install_docker() {
+    echo -e "${YELLOW}🛠️  Instalando Docker...${NC}"
+    apt-get update
+    apt-get install -y ca-certificates curl gnupg
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+
+    echo \
+      "deb [arch=\"$(dpkg --print-architecture)\" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      \"$(. /etc/os-release && echo "$VERSION_CODENAME")\" stable" | \
+      tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Docker instalado correctamente.${NC}"
     else
-        echo -e "${GREEN}✅ $1 está instalado.${NC}"
-        return 0
+        echo -e "${RED}❌ Error instalando Docker.${NC}"
+        exit 1
     fi
 }
 
-check_command "docker" || exit 1
-check_command "npm" || echo -e "${YELLOW}⚠️ npm no encontrado, pero continuaremos con RabbitMQ.${NC}"
+install_node() {
+    echo -e "${YELLOW}🛠️  Instalando Node.js y npm...${NC}"
+    # Usando NodeSource para una versión reciente (ej. 20)
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    apt-get install -y nodejs
+    
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Node.js y npm instalados correctamente.${NC}"
+    else
+        echo -e "${RED}❌ Error instalando Node.js.${NC}"
+        exit 1
+    fi
+}
 
-# Verificar permisos de Docker
-if ! docker ps > /dev/null 2>&1; then
-    echo -e "${RED}❌ No tienes permisos para ejecutar Docker.${NC}"
-    echo -e "${YELLOW}ℹ️  Por favor ejecuta este script con sudo:${NC}"
-    echo -e "   ${GREEN}sudo ./orquestacion/setup.sh${NC}"
-    exit 1
+if ! command -v docker &> /dev/null; then
+    install_docker
+else
+    echo -e "${GREEN}✅ Docker ya está instalado.${NC}"
+fi
+
+if ! command -v npm &> /dev/null; then
+    install_node
+else
+    echo -e "${GREEN}✅ npm ya está instalado.${NC}"
 fi
 
 echo ""
+
+# --- 1.1 Pausa para configuración manual (.env) ---
+echo -e "${YELLOW}--- 1.1 Configuración Manual ---${NC}"
+echo -e "${BLUE}ℹ️  El script se pausará ahora.${NC}"
+echo -e "Por favor, asegúrate de cargar tus archivos ${GREEN}.env${NC} y cualquier otra configuración necesaria en el directorio del proyecto."
+echo -e "Puedes usar 'scp' o un cliente SFTP para transferir los archivos."
+echo -e "Presiona [ENTER] cuando estés listo para continuar..."
+read -r
 
 # --- 2. Setup RabbitMQ Auth ---
 echo -e "${YELLOW}--- 2. Configurando Autenticación de RabbitMQ ---${NC}"
@@ -61,8 +104,8 @@ echo "Verificando estado de RabbitMQ..."
 if ! docker ps | grep -q "$RABBITMQ_CONTAINER"; then
     echo "RabbitMQ no está corriendo. Iniciando..."
     docker compose up -d
-    echo "Esperando a que RabbitMQ inicie (10s)..."
-    sleep 10
+    echo "Esperando a que RabbitMQ inicie (15s)..."
+    sleep 15
 else
     echo -e "${GREEN}✅ RabbitMQ ya está corriendo.${NC}"
 fi
@@ -80,16 +123,13 @@ create_rabbitmq_user() {
          echo -e "${GREEN}  ✅ Usuario '$user' creado.${NC}"
     else
          echo -e "${YELLOW}  ⚠️ El usuario '$user' ya existe o hubo un error (se intentará actualizar permisos).${NC}"
-         # Intentar cambiar password por si acaso (opcional, aquí solo aseguramos existencia)
+         # Intentar cambiar password por si acaso
          docker exec "$RABBITMQ_CONTAINER" rabbitmqctl change_password "$user" "$pass" 2>/dev/null
     fi
 
     # Asignar permisos (vhost: /, configure: .*, write: .*, read: .*)
     docker exec "$RABBITMQ_CONTAINER" rabbitmqctl set_permissions -p / "$user" ".*" ".*" ".*"
     echo -e "${GREEN}  ✅ Permisos asignados a '$user'.${NC}"
-    
-    # Asignar tag management (opcional, para que puedan entrar al UI si se desea)
-    # docker exec "$RABBITMQ_CONTAINER" rabbitmqctl set_user_tags "$user" management
 }
 
 # Crear usuarios para los microservicios
