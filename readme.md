@@ -2,7 +2,22 @@
 
 Este directorio contiene la configuración de Docker Compose y scripts para orquestar todos los microservicios del proyecto Aura.
 
-## 🚀 Inicio Rápido
+## 🚀 Instalación Rápida (Primera Vez)
+
+Si es la primera vez que configuras el proyecto, ejecuta:
+
+```bash
+wget https://raw.githubusercontent.com/eduartrob/orchestration-service-aura/main/setup.sh
+chmod +x setup.sh
+./setup.sh
+```
+
+Este comando:
+1. Descarga el script de instalación
+2. Clona todos los repositorios de microservicios
+3. Te pide configurar el `.env` de cada servicio interactivamente
+
+## 🎯 Inicio Rápido (Ya Configurado)
 
 ### Prerrequisitos
 
@@ -13,7 +28,7 @@ Este directorio contiene la configuración de Docker Compose y scripts para orqu
 Desde el directorio `orchestration`:
 
 ```bash
-./start.sh
+./scripts/start.sh
 ```
 
 Este comando:
@@ -24,7 +39,7 @@ Este comando:
 ### Detener Todos los Servicios
 
 ```bash
-./stop.sh
+./scripts/stop.sh
 ```
 
 ## 📋 Servicios Incluidos
