@@ -1,0 +1,158 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # INFRASTRUCTURE
+  # ---------------------------------------------------------------------------
+  
+  # PostgreSQL (Auth, Messaging, Notifications, Social)
+  db:
+    image: postgres:15-alpine
+    container_name: aura_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aura_auth # Default DB, others created by init script
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - aura_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ (Message Broker)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: aura_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - aura_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # MICROSERVICES
+  # ---------------------------------------------------------------------------
+
+  # Auth Service
+  auth-service:
+    build: ../auth-service
+    container_name: aura_auth_service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_auth?schema=public
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - JWT_SECRET=pezcadofrito.1
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - aura_network
+
+  # Social Service (Wilber)
+  social-service:
+    build: ../social-service-wilber
+    container_name: aura_social_service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_social?schema=public
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - MESSAGING_SERVICE_URL=http://messaging-service:3003/api/v1
+      - JWT_SECRET=pezcadofrito.1
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - aura_network
+
+  # Messaging Service (Aura)
+  messaging-service:
+    build: ../messaging-service-aura
+    container_name: aura_messaging_service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_messaging?schema=public
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - JWT_SECRET=pezcadofrito.1
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - aura_network
+
+  # Notification Service
+  notifications-service:
+    build: ../notifications
+    container_name: aura_notifications_service
+    ports:
+      - "3004:3004"
+    environment:
+      - PORT=3004
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_notifications?schema=public
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - RABBIT_QUEUE=notifications_queue
+      - JWT_SECRET=pezcadofrito.1
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - aura_network
+
+  # ---------------------------------------------------------------------------
+  # API GATEWAY
+  # ---------------------------------------------------------------------------
+  
+  gateway:
+    build: ../gateway
+    container_name: aura_gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - AUTH_URL=http://auth-service:3001
+      - SOCIAL_URL=http://social-service:3002
+      - MESSAGING_URL=http://messaging-service:3003
+      - NOTIFICATIONS_URL=http://notifications-service:3004
+      - JWT_SECRET=pezcadofrito.1
+    depends_on:
+      - auth-service
+      - social-service
+      - messaging-service
+      - notifications-service
+    networks:
+      - aura_network
+
+networks:
+  aura_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
