@@ -16,6 +16,29 @@ echo -e "${BLUE}    🚀 Aura Orchestration - Instalación Rápida             $
 echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
 echo ""
 
+# Función para instalar Docker si no existe
+install_docker() {
+    if ! command -v docker &> /dev/null; then
+        echo -e "${BLUE}🐳 Docker no encontrado. Instalando Docker...${NC}"
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
+        rm get-docker.sh
+        
+        # Agregar usuario actual al grupo docker
+        sudo usermod -aG docker $USER
+        
+        echo -e "${GREEN}✅ Docker instalado correctamente${NC}"
+        echo -e "${YELLOW}⚠️  Se ha agregado tu usuario al grupo 'docker'.${NC}"
+        echo -e "${YELLOW}    Para aplicar los cambios de grupo sin reiniciar, el script continuará...${NC}"
+    else
+        echo -e "${GREEN}✅ Docker ya está instalado${NC}"
+    fi
+}
+
+# Ejecutar instalación de dependencias
+install_docker
+
+# Repositorio de orchestration
 # Repositorio de orchestration
 ORCHESTRATION_REPO="https://github.com/eduartrob/orchestration-service-aura.git"
 ORCHESTRATION_DIR="orchestration"
