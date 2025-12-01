@@ -18,21 +18,23 @@ echo -e "${BLUE}    🚀 Setup Maestro - Aura Microservices                   ${
 echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
 echo ""
 
-# Directorio base (un nivel arriba de orchestration)
+# Directorio base (el padre de orchestration)
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-BASE_DIR="$(dirname "$SCRIPT_DIR")"
+# SCRIPT_DIR = .../orchestration/scripts
+# Queremos llegar a .../ (el padre de orchestration)
+BASE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 cd "$BASE_DIR"
 
-echo -e "${YELLOW}📍 Directorio base: ${BASE_DIR}${NC}"
+echo -e "${YELLOW}📍 Directorio base para clonar: ${BASE_DIR}${NC}"
 echo ""
 
-# Definir repositorios
+# Definir repositorios y sus carpetas destino
 declare -A REPOS=(
     ["auth-service"]="https://github.com/eduartrob/auth-service-aura.git"
-    ["gateway-service-aura"]="https://github.com/eduartrob/gateway-service-aura.git"
+    ["gateway-service"]="https://github.com/eduartrob/gateway-service-aura.git"
     ["messaging-service"]="https://github.com/eduartrob/messaging-service-aura.git"
-    ["notifications"]="https://github.com/eduartrob/notifications-service-aura.git"
+    ["notifications-service"]="https://github.com/eduartrob/notifications-service-aura.git"
     ["social-service"]="https://github.com/eduartrob/social-service-aura.git"
 )
 
