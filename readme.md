@@ -1,36 +1,69 @@
-# Orchestration Service
+# Orchestration - Aura Microservices
 
-Este directorio contiene scripts y documentación para orquestar el despliegue y configuración de los microservicios del proyecto Aura.
+Este directorio contiene la configuración de Docker Compose y scripts para orquestar todos los microservicios del proyecto Aura.
 
-## Setup Automatizado
+## 🚀 Inicio Rápido
 
-Sigue estos pasos para configurar tu entorno e instalar dependencias globales.
+### Prerrequisitos
 
-### 1. Conexión al Servidor
+- Docker y Docker Compose instalados en tu máquina
 
-Conéctate a tu instancia EC2 (o servidor remoto) por SSH.
+### Iniciar Todos los Servicios
 
-### 2. Descarga y Ejecución
-
-Descarga y ejecuta el script de configuración. Estos comandos descargarán el script, le darán permisos de ejecución y lo iniciarán.
+Desde el directorio `orchestration`:
 
 ```bash
-wget https://raw.githubusercontent.com/eduartrob/orchestration-service-aura/main/setup.sh
-chmod +x setup.sh
-sudo ./setup.sh
+./start.sh
 ```
 
-> **Nota:** Es importante ejecutar el script con `sudo` para permitir la instalación de paquetes globales y la actualización del sistema.
+Este comando:
+- Construye las imágenes Docker de todos los servicios
+- Inicia PostgreSQL, RabbitMQ y todos los microservicios
+- Los servicios quedan corriendo en segundo plano
 
-### 3. ¿Qué hace el script?
+### Detener Todos los Servicios
 
-1.  **Actualización del Sistema:** Ejecuta `apt-get update` y `upgrade` para asegurar que el servidor esté al día.
-2.  **Instalación de Dependencias:** Verifica e instala automáticamente Docker, Docker Compose y Node.js si no están presentes.
+```bash
+./stop.sh
+```
 
-### 4. Pasos Siguientes
+## 📋 Servicios Incluidos
 
-Una vez finalizado el setup, deberás:
+El `docker-compose.yml` orquesta los siguientes servicios:
 
-1.  Clonar tus repositorios de microservicios.
-2.  Configurar los archivos `.env` manualmente.
-3.  Ejecutar cada servicio según sea necesario (ej. `docker compose up` o `npm run dev`).
+- **PostgreSQL** (`db`): Base de datos compartida
+- **RabbitMQ** (`rabbitmq`): Sistema de mensajería
+- **Auth Service**: Autenticación y gestión de usuarios
+- **Gateway**: API Gateway
+- **Messaging Service**: Servicio de mensajería
+- **Notifications Service**: Servicio de notificaciones
+- **Social Service**: Servicio social
+
+## 🔧 Comandos Útiles
+
+Ver el estado de los servicios:
+```bash
+docker-compose ps
+```
+
+Ver logs de todos los servicios:
+```bash
+docker-compose logs -f
+```
+
+Ver logs de un servicio específico:
+```bash
+docker-compose logs -f auth-service
+```
+
+Reconstruir un servicio específico:
+```bash
+docker-compose up -d --build auth-service
+```
+
+## 📁 Archivos Importantes
+
+- `docker-compose.yml`: Configuración de todos los servicios
+- `init-postgres.sql`: Script de inicialización de bases de datos
+- `start.sh`: Script para iniciar todos los servicios
+- `stop.sh`: Script para detener todos los servicios
