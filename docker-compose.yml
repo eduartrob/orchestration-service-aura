@@ -69,7 +69,7 @@ services:
 
   # Social Service (Wilber)
   social-service:
-    build: ../social-service-wilber
+    build: ../social-service-aura
     container_name: aura_social_service
     ports:
       - "3002:3002"
