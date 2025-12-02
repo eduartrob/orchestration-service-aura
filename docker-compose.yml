@@ -108,7 +108,7 @@ services:
 
   # Notification Service
   notifications-service:
-    build: ../notifications
+    build: ../notification
     container_name: aura_notifications_service
     ports:
       - "3004:3004"
