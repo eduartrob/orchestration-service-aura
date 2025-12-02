@@ -118,6 +118,9 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - RABBIT_QUEUE=notifications_queue
       - JWT_SECRET=pezcadofrito.1
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
     depends_on:
       db:
         condition: service_healthy
