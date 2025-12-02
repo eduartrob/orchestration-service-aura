@@ -146,8 +146,8 @@ services:
     environment:
       - PORT=3000
       - AUTH_URL=http://auth-service:3001
-      - SOCIAL_URL=http://social-service:3002
-      - MESSAGING_URL=http://messaging-service:3003
+      - POSTS_URL=http://social-service:3002
+      - CHAT_URL=http://messaging-service:3003
       - NOTIFICATIONS_URL=http://notifications-service:3004
       - JWT_SECRET=pezcadofrito.1
     depends_on:
