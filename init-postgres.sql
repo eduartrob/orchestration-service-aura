@@ -1,4 +1,4 @@
-CREATE DATABASE aura_auth;
+-- aura_auth is created by POSTGRES_DB env var
 CREATE DATABASE aura_messaging;
 CREATE DATABASE aura_notifications;
 CREATE DATABASE aura_social;
