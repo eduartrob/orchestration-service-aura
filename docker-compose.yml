@@ -69,16 +69,30 @@ services:
 
   # Social Service (Wilber)
   social-service:
-    build: ../social-service-aura
+    build: ../social-service-wilber
     container_name: aura_social_service
     ports:
       - "3002:3002"
     environment:
       - PORT=3002
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_social?schema=public
+      - DB_DIALECT=postgresql
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DATABASE=aura_social
+      - PG_HOST=db
+      - PG_PORT=5432
+      # Variables for MigrationManager (which uses DB_*)
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=aura_social
+      - DB_HOST=db
+      - DB_PORT=5432
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - MESSAGING_SERVICE_URL=http://messaging-service:3003/api/v1
       - JWT_SECRET=pezcadofrito.1
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     depends_on:
       db:
         condition: service_healthy
