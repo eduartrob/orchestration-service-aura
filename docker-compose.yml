@@ -50,7 +50,7 @@ services:
 
   # Auth Service
   auth-service:
-    build: ../auth-service
+    build: ../auth-service-aura
     container_name: aura_auth_service
     ports:
       - "3001:3001"
@@ -69,7 +69,7 @@ services:
 
   # Social Service (Wilber)
   social-service:
-    build: ../social-service
+    build: ../social-service-aura
     container_name: aura_social_service
     ports:
       - "3002:3002"
@@ -89,7 +89,7 @@ services:
 
   # Messaging Service (Aura)
   messaging-service:
-    build: ../messaging-service
+    build: ../messaging-service-aura
     container_name: aura_messaging_service
     ports:
       - "3003:3003"
@@ -108,7 +108,7 @@ services:
 
   # Notification Service
   notifications-service:
-    build: ../notifications-service
+    build: ../notifications-service-aura
     container_name: aura_notifications_service
     ports:
       - "3004:3004"
@@ -131,7 +131,7 @@ services:
   # ---------------------------------------------------------------------------
 
   gateway:
-    build: ../gateway-service
+    build: ../gateway-service-aura
     container_name: aura_gateway
     ports:
       - "3000:3000"
