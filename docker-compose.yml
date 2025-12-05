@@ -197,6 +197,8 @@ services:
       - DATABASE_URL_MESSAGING=postgresql://postgres:postgres@db:5432/aura_messaging
       # NLP Model
       - NLP_MODEL_NAME=UMUTeam/roberta-spanish-sentiment-analysis
+      # Gemini AI para chat
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
