@@ -11,9 +11,12 @@ else
     DOCKER_COMPOSE_CMD="docker-compose"
 fi
 
-# Use --progress=plain for cleaner terminal output
-$DOCKER_COMPOSE_CMD -f docker-compose.yml up -d --build --progress=plain
+# Build and start services
+$DOCKER_COMPOSE_CMD -f docker-compose.yml up -d --build
 
 echo ""
-echo "✅ Services started! Check status with 'docker-compose ps'"
+echo "✅ Services started!"
+echo ""
+echo "📋 Check status with: $DOCKER_COMPOSE_CMD ps"
+echo "📜 View logs with:    $DOCKER_COMPOSE_CMD logs -f"
 
