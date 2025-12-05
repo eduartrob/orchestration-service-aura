@@ -93,6 +93,8 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - MESSAGING_SERVICE_URL=http://messaging-service:3003/api/v1
       - JWT_SECRET=pezcadofrito.1
+    volumes:
+      - social_uploads:/app/uploads # ✅ NUEVO: Persistir imágenes subidas
     depends_on:
       db:
         condition: service_healthy
@@ -176,3 +178,4 @@ networks:
 
 volumes:
   postgres_data:
+  social_uploads: # ✅ NUEVO: Volumen para imágenes de publicaciones
