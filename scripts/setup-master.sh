@@ -30,12 +30,13 @@ echo -e "${YELLOW}📍 Directorio base para clonar: ${BASE_DIR}${NC}"
 echo ""
 
 # Definir repositorios y sus carpetas destino
+# IMPORTANTE: Los nombres deben coincidir con las rutas de build en docker-compose.yml
 declare -A REPOS=(
-    ["auth-service"]="https://github.com/eduartrob/auth-service-aura.git"
-    ["gateway-service"]="https://github.com/eduartrob/gateway-service-aura.git"
-    ["messaging-service"]="https://github.com/eduartrob/messaging-service-aura.git"
-    ["notifications-service"]="https://github.com/eduartrob/notifications-service-aura.git"
-    ["social-service"]="https://github.com/eduartrob/social-service-aura.git"
+    ["auth-service-aura"]="https://github.com/eduartrob/auth-service-aura.git"
+    ["gateway-service-aura"]="https://github.com/eduartrob/gateway-service-aura.git"
+    ["messaging-service-aura"]="https://github.com/eduartrob/messaging-service-aura.git"
+    ["notifications-service-aura"]="https://github.com/eduartrob/notifications-service-aura.git"
+    ["social-service-aura"]="https://github.com/eduartrob/social-service-aura.git"
 )
 
 # --- Paso 1: Clonar repositorios ---
