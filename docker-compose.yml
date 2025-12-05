@@ -68,6 +68,13 @@ services:
         condition: service_healthy
     networks:
       - aura_network
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:3001/health" ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
 
   # Social Service (Wilber)
   social-service:
@@ -79,6 +86,7 @@ services:
       - ../social-service-aura/.env
     environment:
       - PORT=3002
+      - RUN_MIGRATIONS=true
       - DB_DIALECT=postgres
       - PG_USER=postgres
       - PG_PASSWORD=postgres
