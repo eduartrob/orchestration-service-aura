@@ -93,6 +93,10 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - MESSAGING_SERVICE_URL=http://messaging-service:3003/api/v1
       - JWT_SECRET=pezcadofrito.1
+      # Cloudinary para subida de imágenes (avatar, publicaciones)
+      - CLOUDINARY_CLOUD_NAME=derzzspjo
+      - CLOUDINARY_API_KEY=862816188115966
+      - CLOUDINARY_API_SECRET=uKrNlLw39ZQ-oYdSFaPJu8-Ynrk
     volumes:
       - social_uploads:/app/uploads # ✅ NUEVO: Persistir imágenes subidas
     depends_on:
