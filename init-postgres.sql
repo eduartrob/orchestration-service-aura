@@ -9,12 +9,14 @@
 CREATE DATABASE aura_messaging;
 CREATE DATABASE aura_notifications;
 CREATE DATABASE aura_social;
+CREATE DATABASE aura_data_miner;  -- ✅ NUEVO: Base de datos para clustering/analytics
 
 -- Grant privileges on all databases
 GRANT ALL PRIVILEGES ON DATABASE aura_auth TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE aura_messaging TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE aura_notifications TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE aura_social TO postgres;
+GRANT ALL PRIVILEGES ON DATABASE aura_data_miner TO postgres;
 
 -- Connect to aura_messaging and create extensions
 \c aura_messaging;

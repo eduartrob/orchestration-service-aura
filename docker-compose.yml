@@ -172,6 +172,40 @@ services:
     networks:
       - aura_network
 
+  # ---------------------------------------------------------------------------
+  # CLUSTERING / ML SERVICE (Python)
+  # ---------------------------------------------------------------------------
+
+  clustering-service:
+    build: ../clustering-service-aura
+    container_name: aura_clustering_service
+    ports:
+      - "8001:8001"
+    environment:
+      - SERVICE_NAME=clustering-service-aura
+      - SERVICE_PORT=8001
+      - DEBUG=true
+      # Base de datos analítica (target)
+      - DATABASE_URL_ANALYTICS=postgresql://postgres:postgres@db:5432/aura_data_miner
+      # Bases de datos fuente (source)
+      - DATABASE_URL_AUTH=postgresql://postgres:postgres@db:5432/aura_auth
+      - DATABASE_URL_SOCIAL=postgresql://postgres:postgres@db:5432/aura_social
+      - DATABASE_URL_MESSAGING=postgresql://postgres:postgres@db:5432/aura_messaging
+      # NLP Model
+      - NLP_MODEL_NAME=UMUTeam/roberta-spanish-sentiment-analysis
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - aura_network
+    # El modelo NLP es pesado, dar más tiempo de arranque
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" ]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+
 networks:
   aura_network:
     driver: bridge
