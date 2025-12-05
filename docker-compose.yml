@@ -75,7 +75,7 @@ services:
       - "3002:3002"
     environment:
       - PORT=3002
-      - DB_DIALECT=postgresql
+      - DB_DIALECT=postgres
       - PG_USER=postgres
       - PG_PASSWORD=postgres
       - PG_DATABASE=aura_social
