@@ -54,6 +54,8 @@ services:
     container_name: aura_auth_service
     ports:
       - "3001:3001"
+    env_file:
+      - ../auth-service-aura/.env
     environment:
       - PORT=3001
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_auth?schema=public
@@ -73,6 +75,8 @@ services:
     container_name: aura_social_service
     ports:
       - "3002:3002"
+    env_file:
+      - ../social-service-aura/.env
     environment:
       - PORT=3002
       - DB_DIALECT=postgres
@@ -81,7 +85,6 @@ services:
       - PG_DATABASE=aura_social
       - PG_HOST=db
       - PG_PORT=5432
-      # Variables for MigrationManager (which uses DB_*)
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=aura_social
@@ -90,9 +93,6 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - MESSAGING_SERVICE_URL=http://messaging-service:3003/api/v1
       - JWT_SECRET=pezcadofrito.1
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     depends_on:
       db:
         condition: service_healthy
@@ -107,6 +107,8 @@ services:
     container_name: aura_messaging_service
     ports:
       - "3003:3003"
+    env_file:
+      - ../messaging-service-aura/.env
     environment:
       - PORT=3003
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_messaging?schema=public
@@ -126,20 +128,14 @@ services:
     container_name: aura_notifications_service
     ports:
       - "3004:3004"
+    env_file:
+      - ../notifications-service-aura/.env
     environment:
       - PORT=3004
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_notifications?schema=public
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - RABBIT_QUEUE=notifications_queue
       - JWT_SECRET=pezcadofrito.1
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
-      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
-      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_SECURE=${SMTP_SECURE}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       db:
         condition: service_healthy
@@ -157,6 +153,8 @@ services:
     container_name: aura_gateway
     ports:
       - "3000:3000"
+    env_file:
+      - ../gateway-service-aura/.env
     environment:
       - PORT=3000
       - AUTH_URL=http://auth-service:3001
