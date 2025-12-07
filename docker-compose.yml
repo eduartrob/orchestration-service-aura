@@ -103,8 +103,8 @@ services:
       - JWT_SECRET=pezcadofrito.1
       # Cloudinary para subida de imágenes (avatar, publicaciones)
       - CLOUDINARY_CLOUD_NAME=derzzspjo
-      - CLOUDINARY_API_KEY=862816188115966
-      - CLOUDINARY_API_SECRET=uKrNlLw39ZQ-oYdSFaPJu8-Ynrk
+      - CLOUDINARY_API_KEY=967388682229272
+      - CLOUDINARY_API_SECRET=BOF1fG3Hx-stAkgKdJgehh23iDw
     volumes:
       - social_uploads:/app/uploads # ✅ NUEVO: Persistir imágenes subidas
     depends_on:
