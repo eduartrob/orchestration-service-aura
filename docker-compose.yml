@@ -61,6 +61,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/aura_auth?schema=public
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - JWT_SECRET=pezcadofrito.1
+      - PASSWORD_RESET_BASE_URL=aura:// # Deeplink for mobile app password reset
     depends_on:
       db:
         condition: service_healthy
