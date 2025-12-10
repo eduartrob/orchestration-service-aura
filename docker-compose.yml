@@ -176,12 +176,16 @@ services:
       - POSTS_URL=http://social-service:3002
       - CHAT_URL=http://messaging-service:3003
       - NOTIFICATIONS_URL=http://notifications-service:3004
+      - CLUSTERING_URL=http://clustering-service:8001
+      - CHATBOT_URL=http://chatbot-service:8002
       - JWT_SECRET=pezcadofrito.1
     depends_on:
       - auth-service
       - social-service
       - messaging-service
       - notifications-service
+      - clustering-service
+      - chatbot-service
     networks:
       - aura_network
 
