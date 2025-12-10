@@ -221,6 +221,37 @@ services:
       start_period: 120s
       retries: 3
 
+  # ---------------------------------------------------------------------------
+  # CHATBOT SERVICE (Python - Gemini AI)
+  # ---------------------------------------------------------------------------
+
+  chatbot-service:
+    build: ../chatbot-service-aura
+    container_name: aura_chatbot_service
+    ports:
+      - "8002:8002"
+    environment:
+      - SERVICE_NAME=chatbot-service-aura
+      - SERVICE_PORT=8002
+      - DEBUG=true
+      # Gemini AI API Key
+      - GEMINI_API_KEY=AIzaSyAu6XWy3iobvA8otWC_hwrOfgt7B_gK3TM
+      # Conexión al clustering service para contexto del usuario
+      - CLUSTERING_SERVICE_URL=http://clustering-service:8001
+      # NLP Model para análisis de sentimiento
+      - NLP_MODEL_NAME=pysentimiento/robertuito-sentiment-analysis
+    depends_on:
+      clustering-service:
+        condition: service_healthy
+    networks:
+      - aura_network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/api/v1/chat/health')" ]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+
 networks:
   aura_network:
     driver: bridge
