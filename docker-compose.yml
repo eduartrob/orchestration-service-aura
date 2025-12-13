@@ -198,10 +198,15 @@ services:
     container_name: aura_clustering_service
     ports:
       - "8001:8001"
+    volumes:
+      - nlp_models:/models  # Shared NLP models volume
     environment:
       - SERVICE_NAME=clustering-service-aura
       - SERVICE_PORT=8001
       - DEBUG=true
+      # Shared NLP model cache (saves ~2GB by sharing with chatbot-service)
+      - TRANSFORMERS_CACHE=/models
+      - HF_HOME=/models
       # Base de datos analítica (target)
       - DATABASE_URL_ANALYTICS=postgresql://postgres:postgres@db:5432/aura_data_miner
       # Bases de datos fuente (source)
@@ -209,7 +214,7 @@ services:
       - DATABASE_URL_SOCIAL=postgresql://postgres:postgres@db:5432/aura_social
       - DATABASE_URL_MESSAGING=postgresql://postgres:postgres@db:5432/aura_messaging
       # NLP Model
-      - NLP_MODEL_NAME=UMUTeam/roberta-spanish-sentiment-analysis
+      - NLP_MODEL_NAME=pysentimiento/robertuito-sentiment-analysis
       # Gemini AI para chat
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     depends_on:
@@ -234,10 +239,15 @@ services:
     container_name: aura_chatbot_service
     ports:
       - "8002:8002"
+    volumes:
+      - nlp_models:/models  # Shared NLP models volume
     environment:
       - SERVICE_NAME=chatbot-service-aura
       - SERVICE_PORT=8002
       - DEBUG=true
+      # Shared NLP model cache (saves ~2GB by sharing with clustering-service)
+      - TRANSFORMERS_CACHE=/models
+      - HF_HOME=/models
       # Gemini AI API Key
       - GEMINI_API_KEY=AIzaSyAu6XWy3iobvA8otWC_hwrOfgt7B_gK3TM
       # Conexión al clustering service para contexto del usuario
@@ -263,3 +273,4 @@ networks:
 volumes:
   postgres_data:
   social_uploads: # ✅ NUEVO: Volumen para imágenes de publicaciones
+  nlp_models:     # ✅ NUEVO: Modelos NLP compartidos entre clustering y chatbot (~2GB ahorrados)
