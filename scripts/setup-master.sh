@@ -37,6 +37,8 @@ declare -A REPOS=(
     ["messaging-service-aura"]="https://github.com/eduartrob/messaging-service-aura.git"
     ["notifications-service-aura"]="https://github.com/eduartrob/notifications-service-aura.git"
     ["social-service-aura"]="https://github.com/eduartrob/social-service-aura.git"
+    ["clustering-service-aura"]="https://github.com/eduartrob/clustering-service-aura.git"
+    ["chatbot-service-aura"]="https://github.com/eduartrob/chatbot-service-aura.git"
 )
 
 # --- Paso 1: Clonar repositorios ---
